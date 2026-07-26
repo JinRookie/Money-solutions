@@ -4,6 +4,7 @@
  */
 
 import { initializeApp } from './services/init.service.js';
+import { StorageService } from './services/storage.service.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -27,10 +28,42 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Temporary debug panel logic.
- * Stub defined here to prevent ReferenceErrors during boot.
- * Implementation is injected in the next commit.
+ * Wires up the temporary debug panel for Milestone 1.
+ * Allows viewing all mm_ prefixed data and clearing storage on the fly.
  */
 function setupDebugPanel() {
-  // Stub - will be implemented in Commit 7
+  const toggleBtn = document.getElementById('debug-toggle');
+  const panel = document.getElementById('debug-panel');
+  const output = document.getElementById('debug-output');
+  const clearBtn = document.getElementById('debug-clear');
+
+  if (!toggleBtn || !panel || !output || !clearBtn) {
+    console.warn('[MoneyManager] Debug panel elements not found in DOM.');
+    return;
+  }
+
+  /**
+   * Reads current state from StorageService and updates the debug output.
+   */
+  function renderDebugData() {
+    const data = StorageService.exportAll();
+    output.textContent = JSON.stringify(data, null, 2);
+  }
+
+  // Toggle panel visibility and refresh data on open
+  toggleBtn.addEventListener('click', () => {
+    const isVisible = panel.style.display === 'block';
+    panel.style.display = isVisible ? 'none' : 'block';
+    
+    if (!isVisible) {
+      renderDebugData();
+    }
+  });
+
+  // Clear all storage and refresh the display
+  clearBtn.addEventListener('click', () => {
+    // Manager specified explicit localStorage.clear() for this debug tool
+    localStorage.clear();
+    renderDebugData();
+  });
 }
