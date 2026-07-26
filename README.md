@@ -1,2 +1,2 @@
 # Money Manager 
-Offline-first personal finance app. 
+Offline-first personal finance operating system 
