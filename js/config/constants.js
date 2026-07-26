@@ -48,6 +48,12 @@ export const GoalStatus = Object.freeze({
   COMPLETED: 'completed',
 });
 
+export const CategoryType = Object.freeze({
+  INCOME: 'income',
+  EXPENSE: 'expense',
+  TRANSFER: 'transfer',
+});
+
 export const AppConfig = Object.freeze({
   NAME: 'MoneyManager',
   VERSION: '1.0.0',
