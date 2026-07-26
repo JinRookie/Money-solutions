@@ -1,18 +1,4 @@
-import { AppConfig, AccountType, TransactionType, BudgetPeriod } from './constants.js';
-
-/**
- * Storage key mappings. Centralized to prevent typos.
- */
-export const STORE_KEYS = Object.freeze({
-  METADATA: `${AppConfig.STORAGE_PREFIX}metadata`,
-  USER: `${AppConfig.STORAGE_PREFIX}user`,
-  WALLETS: `${AppConfig.STORAGE_PREFIX}wallets`,
-  TRANSACTIONS: `${AppConfig.STORAGE_PREFIX}transactions`,
-  CATEGORIES: `${AppConfig.STORAGE_PREFIX}categories`,
-  BUDGETS: `${AppConfig.STORAGE_PREFIX}budgets`,
-  GOALS: `${AppConfig.STORAGE_PREFIX}goals`,
-  SETTINGS: `${AppConfig.STORAGE_PREFIX}settings`,
-});
+import { AppConfig } from './constants.js';
 
 /**
  * Default application settings.
@@ -24,7 +10,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   theme: 'light',
   notifications: true,
   dateFormat: 'DD/MM/YYYY',
-  weekStartsOn: 'Monday',
+  weekStartsOn: 'sunday',
   pinEnabled: false,
   pinHash: null,
 });
