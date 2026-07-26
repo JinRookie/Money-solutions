@@ -1,0 +1,42 @@
+#app {
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-surface);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Debug panel styling (temporary) */
+#debug-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.95);
+  color: #00ff00;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: var(--space-md);
+  overflow: auto;
+  z-index: 10000;
+}
+
+#debug-panel h3 {
+  color: #ffffff;
+  margin-bottom: var(--space-md);
+}
+
+#debug-output {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+#debug-clear {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-danger);
+  color: white;
+  border-radius: var(--radius-md);
+}
