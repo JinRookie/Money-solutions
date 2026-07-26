@@ -1,2 +1,2 @@
-# Money-solutions
+# Money Manager 
 Offline-first personal finance app. 
