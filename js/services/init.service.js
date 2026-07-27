@@ -5,7 +5,7 @@
 
 import { StorageService } from './storage.service.js';
 import { AppConfig } from '../config/constants.js';
-import { STORE_KEYS, DEFAULT_SETTINGS, DEFAULT_CATEGORIES } from '../config/schema.js';
+import { DEFAULT_SETTINGS, DEFAULT_CATEGORIES } from '../config/schema.js';
 import { createUser } from '../models/user.model.js';
 import { createCategory } from '../models/category.model.js';
 
