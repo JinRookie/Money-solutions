@@ -1,7 +1,6 @@
 import { generateUUID } from '../utils/id.util.js';
 import { isNonEmptyString } from '../utils/validators.util.js';
-
-const ALLOWED_TYPES = ['income', 'expense', 'transfer'];
+import { CategoryType } from '../config/constants.js';
 
 /**
  * Creates a validated Category object.
@@ -14,10 +13,10 @@ export function createCategory(props = {}) {
   if (!isNonEmptyString(props.name)) {
     throw new Error('[Category] Invalid name: Must be a non-empty string.');
   }
-
-  if (!ALLOWED_TYPES.includes(props.type)) {
-    throw new Error(`[Category] Invalid type: ${props.type}. Must be 'income', 'expense', or 'transfer'.`);
-  }
+  
+if (!Object.values(CategoryType).includes(props.type)) {
+  throw new Error(`[Category] Invalid type: ${props.type}. Must be a valid CategoryType.`);
+}
 
   return {
     id: generateUUID(),
