@@ -1,5 +1,6 @@
 import { generateUUID } from '../utils/id.util.js';
 import { isNonEmptyString, isValidAmount, isValidISODate } from '../utils/validators.util.js';
+import { GoalStatus } from '../config/constants.js';
 
 /**
  * Creates a validated Goal object.
@@ -40,7 +41,7 @@ export function createGoal(props = {}) {
     currentAmount: currentAmount,
     walletId: props.walletId || null,
     deadline: props.deadline,
-    status: props.status || 'active',
+    status: props.status || GoalStatus.ACTIVE,
     createdAt: new Date().toISOString(),
   };
 }
