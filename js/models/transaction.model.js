@@ -60,8 +60,8 @@ export function createTransaction(props = {}) {
     time: props.time || timeString,
     timezone: props.timezone || 'Asia/Qatar',
     note: props.note || '',
-    paymentMethod: paymentMethod: props.paymentMethod || 'cash', // Deferred: PaymentMethod enum pending Phase 2
-    status: status: props.status || TransactionStatus.COMPLETED,
+    paymentMethod: props.paymentMethod || 'cash', // Deferred: PaymentMethod enum pending Phase 2
+    status: props.status || TransactionStatus.COMPLETED,
     isRecurring: props.isRecurring || false,
     recurringId: props.recurringId || null,
     createdAt: now.toISOString(),
@@ -69,4 +69,4 @@ export function createTransaction(props = {}) {
     importSource: props.importSource || 'manual',
     isDeleted: props.isDeleted || false,
   };
-    }
+}
