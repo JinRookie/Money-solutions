@@ -10,7 +10,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   theme: 'light',
   notifications: true,
   dateFormat: 'DD/MM/YYYY',
-  weekStartsOn: 'sunday',
+  weekStartsOn: 'Monday',
   pinEnabled: false,
   pinHash: null,
 });
