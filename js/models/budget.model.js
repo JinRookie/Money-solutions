@@ -1,6 +1,6 @@
 import { generateUUID } from '../utils/id.util.js';
 import { isNonEmptyString, isValidAmount, isValidISODate } from '../utils/validators.util.js';
-import { BudgetPeriod } from '../config/constants.js';
+import { BudgetPeriod, BudgetStatus } from '../config/constants.js';
 
 /**
  * Creates a validated Budget object.
@@ -50,7 +50,7 @@ export function createBudget(props = {}) {
     alertThresholds: props.alertThresholds || [80, 100],
     isRecurring: props.isRecurring || false,
     autoRenew: props.autoRenew !== undefined ? props.autoRenew : true,
-    status: props.status || 'active',
+    status: props.status || BudgetStatus.ACTIVE,
     createdAt: new Date().toISOString(),
   };
 }
