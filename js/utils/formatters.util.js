@@ -17,14 +17,10 @@ export function formatCurrency(amount, currency = 'QAR') {
       style: 'currency',
       currency: currency,
       currencyDisplay: 'code',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
     });
     
-    let formatted = formatter.format(amount / 100);
-    // Ensure strict spacing: "QAR 25.50" instead of potential "QAR25.50"
-    formatted = formatted.replace(/[A-Z]{3}/, match => `${match} `).trim();
-    return formatted;
+    // Intl.NumberFormat with currencyDisplay: 'code' handles spacing correctly natively
+    return formatter.format(amount / 100);
   } catch (e) {
     // Fallback for unsupported currencies in Intl
     const decimalAmount = (amount / 100).toFixed(2);
