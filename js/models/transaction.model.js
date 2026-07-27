@@ -1,6 +1,6 @@
 import { generateUUID, generateTxnNumber } from '../utils/id.util.js';
 import { isNonEmptyString, isValidAmount } from '../utils/validators.util.js';
-import { TransactionType } from '../config/constants.js';
+import { TransactionType, TransactionStatus } from '../config/constants.js';
 import { toISODate } from '../utils/formatters.util.js';
 
 /**
@@ -60,8 +60,8 @@ export function createTransaction(props = {}) {
     time: props.time || timeString,
     timezone: props.timezone || 'Asia/Qatar',
     note: props.note || '',
-    paymentMethod: props.paymentMethod || 'cash',
-    status: props.status || 'completed',
+    paymentMethod: paymentMethod: props.paymentMethod || 'cash', // Deferred: PaymentMethod enum pending Phase 2
+    status: status: props.status || TransactionStatus.COMPLETED,
     isRecurring: props.isRecurring || false,
     recurringId: props.recurringId || null,
     createdAt: now.toISOString(),
