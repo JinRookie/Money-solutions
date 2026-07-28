@@ -5,13 +5,26 @@
 
 import { initializeApp } from './services/init.service.js';
 import { StorageService } from './services/storage.service.js';
+import { WalletService } from './services/wallet.service.js';
+import { LedgerService } from './services/ledger.service.js';
+import { createTransaction } from './models/transaction.model.js';
+import { TransactionType, AccountType } from './config/constants.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   try {
     initializeApp();
-    console.log('[MoneyManager] Boot sequence complete.');
+    console.info('[MoneyManager] Boot sequence complete.');
 
-    // Temporary debug panel wiring (Milestone 1 only)
+    // Temporary: Seed test data and validate services
+    seedTestData();
+    
+    // Isolate tests so they never crash the user-facing app
+    try {
+      runServiceTests();
+    } catch (err) {
+      console.error('[MoneyManager] Service tests failed:', err);
+    }
+
     setupDebugPanel();
   } catch (err) {
     console.error('[MoneyManager] Boot failed:', err);
@@ -26,6 +39,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+/**
+ * Temporary test data seeder. Removed in Milestone 5.
+ */
+function seedTestData() {
+  // Only seed if no wallets exist
+  const wallets = StorageService.get('wallets') || [];
+  if (wallets.length > 0) return;
+
+  const cash = WalletService.create({ name: 'Cash Wallet', type: AccountType.CASH, openingBalance: 50000 });
+  const bank = WalletService.create({ name: 'QNB Bank', type: AccountType.BANK, openingBalance: 200000 });
+
+  // Fetch a real seeded category ID to avoid foreign key violations
+  const categories = StorageService.get('categories') || [];
+  const foodCategory = categories.find(c => c.name === 'Food') || categories[0];
+
+  // Explicit guard to ensure we have a valid category before creating a transaction
+  if (!foodCategory) {
+    throw new Error('[TestData] No seeded category found. Cannot create test transaction.');
+  }
+
+  // Add a test transaction
+  const transactions = StorageService.get('transactions') || [];
+  const expense = createTransaction({
+    type: TransactionType.EXPENSE,
+    amount: 2500,
+    walletId: cash.id,
+    categoryId: foodCategory.id,
+    note: 'Test lunch',
+  });
+  transactions.push(expense);
+  StorageService.set('transactions', transactions);
+
+  console.info('[TestData] Seeded:', cash.name, bank.name);
+}
+
+/**
+ * Temporary service validation. Removed in Milestone 5.
+ */
+function runServiceTests() {
+  const wallets = WalletService.getAll();
+  wallets.forEach(w => {
+    const withBalance = WalletService.getWithBalance(w.id);
+    console.info(`[Test] ${w.name}: QAR ${withBalance.currentBalance / 100}`);
+  });
+
+  const netWorth = LedgerService.getNetWorth();
+  console.info(`[Test] Net Worth: QAR ${netWorth / 100}`);
+
+  const todayFlow = LedgerService.getTodayFlow();
+  console.info(`[Test] Today: +${todayFlow.moneyIn / 100}, -${todayFlow.moneyOut / 100}`);
+}
 
 /**
  * Wires up the temporary debug panel for Milestone 1.
@@ -60,10 +125,10 @@ function setupDebugPanel() {
     }
   });
 
-  // Clear all storage and refresh the display
+  // Clear storage, re-initialize to simulate fresh install, and refresh display
   clearBtn.addEventListener('click', () => {
-    // Manager specified explicit localStorage.clear() for this debug tool
-    localStorage.clear();
-    renderDebugData();
+    localStorage.clear(); // Nuclear clear as per M1 spec
+    initializeApp();      // Re-seed fresh data (buddy's improvement)
+    renderDebugData();    // Show the newly seeded state
   });
 }
