@@ -24,7 +24,6 @@ function get(key) {
       console.warn(`[StorageService] Corrupted data for key: ${PREFIX + key}`, error);
       return null;
     }
-    // Handle cases where localStorage is blocked (e.g. private browsing)
     console.warn(`[StorageService] Error reading key: ${PREFIX + key}`, error);
     return null;
   }
@@ -76,18 +75,24 @@ function remove(key) {
 function exportAll() {
   const data = {};
   try {
+    // Collect keys into an array first to avoid mutation-during-iteration bugs
+    const keys = [];
     for (let i = 0; i < localStorage.length; i++) {
       const fullKey = localStorage.key(i);
       if (fullKey && fullKey.startsWith(PREFIX)) {
-        const logicalKey = fullKey.slice(PREFIX.length);
-        try {
-          data[logicalKey] = JSON.parse(localStorage.getItem(fullKey));
-        } catch (parseError) {
-          console.warn(`[StorageService] Skipping corrupted key during export: ${fullKey}`);
-          data[logicalKey] = null;
-        }
+        keys.push(fullKey);
       }
     }
+
+    keys.forEach(fullKey => {
+      const logicalKey = fullKey.slice(PREFIX.length);
+      try {
+        data[logicalKey] = JSON.parse(localStorage.getItem(fullKey));
+      } catch (parseError) {
+        console.warn(`[StorageService] Skipping corrupted key during export: ${fullKey}`);
+        data[logicalKey] = null;
+      }
+    });
   } catch (error) {
     console.warn('[StorageService] Error accessing localStorage during export.', error);
   }
@@ -110,10 +115,30 @@ function importAll(data) {
   }
 }
 
+/**
+ * Removes all application-specific keys from localStorage.
+ * Leaves non-mm_ keys untouched to avoid destroying data from other apps on the same origin.
+ */
+function clearAll() {
+  try {
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const fullKey = localStorage.key(i);
+      if (fullKey && fullKey.startsWith(PREFIX)) {
+        keysToRemove.push(fullKey);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+  } catch (error) {
+    console.warn('[StorageService] Error during scoped clear.', error);
+  }
+}
+
 export const StorageService = Object.freeze({
   get,
   set,
   remove,
   exportAll,
   importAll,
+  clearAll,
 });
