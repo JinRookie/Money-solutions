@@ -5,6 +5,7 @@
 
 import { AppConfig } from '../config/constants.js';
 import { isPlainObject } from '../utils/validators.util.js';
+import { Logger } from '../utils/logger.util.js';
 
 const PREFIX = AppConfig.STORAGE_PREFIX;
 
@@ -21,10 +22,10 @@ function get(key) {
     return JSON.parse(raw);
   } catch (error) {
     if (error instanceof SyntaxError) {
-      console.warn(`[StorageService] Corrupted data for key: ${PREFIX + key}`, error);
+      Logger.warn('STORAGE_CORRUPTED', `Corrupted data for key: ${PREFIX + key}`, error);
       return null;
     }
-    console.warn(`[StorageService] Error reading key: ${PREFIX + key}`, error);
+    Logger.warn('STORAGE_READ_ERROR', `Error reading key: ${PREFIX + key}`, error);
     return null;
   }
 }
@@ -44,13 +45,16 @@ function set(key, value) {
       error.name === 'QuotaExceededError' || 
       error.name === 'NS_ERROR_DOM_QUOTA_REACHED'
     )) {
+      Logger.error('STORAGE_QUOTA_EXCEEDED', `Cannot save ${key}`);
       throw new Error(`[StorageService] Storage quota exceeded. Cannot save ${key}.`);
     }
     
     if (error instanceof DOMException && error.name === 'SecurityError') {
+      Logger.error('STORAGE_ACCESS_DENIED', `Cannot save ${key}. Is localStorage disabled?`);
       throw new Error(`[StorageService] Storage access denied. Cannot save ${key}. Is localStorage disabled?`);
     }
 
+    Logger.error('STORAGE_UNKNOWN_ERROR', `Error saving ${key}: ${error.message}`, error);
     throw new Error(`[StorageService] Unknown error saving ${key}: ${error.message}`);
   }
 }
@@ -63,7 +67,7 @@ function remove(key) {
   try {
     localStorage.removeItem(PREFIX + key);
   } catch (error) {
-    console.warn(`[StorageService] Error removing key: ${PREFIX + key}`, error);
+    Logger.warn('STORAGE_REMOVE_ERROR', `Error removing key: ${PREFIX + key}`, error);
   }
 }
 
@@ -75,7 +79,6 @@ function remove(key) {
 function exportAll() {
   const data = {};
   try {
-    // Collect keys into an array first to avoid mutation-during-iteration bugs
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) {
       const fullKey = localStorage.key(i);
@@ -89,12 +92,12 @@ function exportAll() {
       try {
         data[logicalKey] = JSON.parse(localStorage.getItem(fullKey));
       } catch (parseError) {
-        console.warn(`[StorageService] Skipping corrupted key during export: ${fullKey}`);
+        Logger.warn('STORAGE_CORRUPTED', `Skipping corrupted key during export: ${fullKey}`);
         data[logicalKey] = null;
       }
     });
   } catch (error) {
-    console.warn('[StorageService] Error accessing localStorage during export.', error);
+    Logger.warn('STORAGE_EXPORT_ERROR', 'Error accessing localStorage during export.', error);
   }
   return data;
 }
@@ -107,6 +110,7 @@ function exportAll() {
  */
 function importAll(data) {
   if (!isPlainObject(data)) {
+    Logger.error('STORAGE_IMPORT_ERROR', 'Provided data is not a plain object.');
     throw new Error('[StorageService] Import failed: Provided data is not a plain object.');
   }
 
@@ -130,7 +134,7 @@ function clearAll() {
     }
     keysToRemove.forEach(key => localStorage.removeItem(key));
   } catch (error) {
-    console.warn('[StorageService] Error during scoped clear.', error);
+    Logger.warn('STORAGE_CLEAR_ERROR', 'Error during scoped clear.', error);
   }
 }
 
