@@ -8,6 +8,7 @@ import { AppConfig } from '../config/constants.js';
 import { DEFAULT_SETTINGS, DEFAULT_CATEGORIES } from '../config/schema.js';
 import { createUser } from '../models/user.model.js';
 import { createCategory } from '../models/category.model.js';
+import { Logger } from '../utils/logger.util.js';
 
 /**
  * Initializes the application on first run.
@@ -43,19 +44,19 @@ export function initializeApp() {
     };
     StorageService.set('metadata', newMetadata);
 
-    console.log(`[MoneyManager] First run initialized. DB version: ${AppConfig.DB_VERSION}`);
+    Logger.info('BOOT_FIRST_RUN', `First run initialized. DB version: ${AppConfig.DB_VERSION}`);
     return;
   }
 
   // 2. Existing DB, Version Match (Idempotent check)
   if (metadata.dbVersion === AppConfig.DB_VERSION) {
-    console.log(`[MoneyManager] App initialized. DB version: ${metadata.dbVersion}`);
+    Logger.info('BOOT_SEQUENCE_COMPLETE', `App initialized. DB version: ${metadata.dbVersion}`);
     return;
   }
 
   // 3. Migration Pathway
   if (metadata.dbVersion < AppConfig.DB_VERSION) {
-    console.log(`[MoneyManager] Migrating DB from ${metadata.dbVersion} to ${AppConfig.DB_VERSION}`);
+    Logger.info('DB_MIGRATION_START', `Migrating DB from ${metadata.dbVersion} to ${AppConfig.DB_VERSION}`);
     
     // Future milestones will inject actual migration logic here based on version diffs.
     
@@ -64,7 +65,7 @@ export function initializeApp() {
       dbVersion: AppConfig.DB_VERSION 
     };
     StorageService.set('metadata', updatedMetadata);
-    console.log('[MoneyManager] Migration complete.');
+    Logger.info('DB_MIGRATION_COMPLETE', 'Migration complete.');
     return;
   }
 }
