@@ -129,7 +129,7 @@ function getOutgoingTransfers(walletId) {
  * @returns {number}
  */
 function getNetWorth() {
-  const wallets = (StorageService.get('wallets') || []).filter(w => w.isActive && w.includeInNetWorth);
+  const wallets = (StorageService.get('wallets') || []).filter(w => w.includeInNetWorth);
   
   return wallets.reduce((totalNetWorth, wallet) => {
     return totalNetWorth + getWalletBalance(wallet.id);
