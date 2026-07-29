@@ -130,10 +130,13 @@ function update(id, updates) {
     throw new Error(`[WalletService] Invalid update field(s): ${Object.keys(updates).join(', ')}`);
   }
 
+  // Clone updates to prevent mutating the caller's object
+  const sanitizedUpdates = { ...updates };
+
   // Validate and sanitize specific field constraints
-  if (updates.name !== undefined) {
-    updates.name = updates.name.trim();
-    if (!isNonEmptyString(updates.name)) {
+  if (sanitizedUpdates.name !== undefined) {
+    sanitizedUpdates.name = sanitizedUpdates.name.trim();
+    if (!isNonEmptyString(sanitizedUpdates.name)) {
       throw new Error('[WalletService] Invalid name: Must be a non-empty string.');
     }
   }
@@ -148,7 +151,7 @@ function update(id, updates) {
   const now = new Date().toISOString();
   wallets[index] = { 
     ...wallets[index], 
-    ...updates, 
+    ...sanitizedUpdates, 
     updatedAt: now 
   };
   
