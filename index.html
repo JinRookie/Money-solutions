@@ -24,26 +24,10 @@
     <h3>Debug</h3>
     <pre id="debug-output"></pre>
     <button id="debug-clear">Clear Storage</button>
-    
   </div>
   <button id="debug-toggle" style="position:fixed;bottom:8px;left:50%;transform:translateX(-50%);z-index:9999;background:#1e88e5;color:#fff;padding:8px 16px;border-radius:8px;font-size:16px;box-shadow:0 4px 6px rgba(0,0,0,0.2);">🐛 DEBUG</button>
 
   <script type="module" src="js/app.js"></script>
-    <script type="module">
-    try {
-      const c = await import('./js/config/constants.js');
-      console.log('Constants OK');
-    } catch(e) {
-      console.error('CONSTANTS CRASH:', e.message);
-    }
-    
-    try {
-      const l = await import('./js/utils/logger.util.js');
-      console.log('Logger OK');
-    } catch(e) {
-      console.error('LOGGER CRASH:', e.message);
-    }
-  </script>
 </body>
 </html>
 
